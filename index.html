@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="bn" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <meta name="theme-color" content="#0b1020" />
-<title>DevStudio — Code Editor</title>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com; frame-src 'none'; object-src 'none'; base-uri 'self';" />
+<title>DevStudio Mobile</title>
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%236366f1'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3E%7B%7D%3C/text%3E%3C/svg%3E" />
 <link rel="stylesheet" href="style.css" />
@@ -12,170 +13,191 @@
 </head>
 <body>
 
-<!-- TOP TOOLBAR -->
-<header class="topbar glass">
-  <button class="icon-btn" id="btnSidebar" aria-label="Toggle sidebar">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-  </button>
-  <div class="brand">
-    <div class="logo">⚡</div>
-    <div class="brand-text">
-      <h1>DevStudio</h1>
-      <span class="project-name" id="projectName">Untitled</span>
+<!-- LOCK SCREEN -->
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-content">
+    <div class="lock-logo">🔐</div>
+    <h2>DevStudio</h2>
+    <p>Enter your PIN to unlock</p>
+    <div class="pin-display" id="pinDisplay">
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
+      <span class="pin-dot"></span>
     </div>
+    <div class="pin-pad" id="pinPad">
+      <button class="pin-btn" data-num="1">1</button>
+      <button class="pin-btn" data-num="2">2</button>
+      <button class="pin-btn" data-num="3">3</button>
+      <button class="pin-btn" data-num="4">4</button>
+      <button class="pin-btn" data-num="5">5</button>
+      <button class="pin-btn" data-num="6">6</button>
+      <button class="pin-btn" data-num="7">7</button>
+      <button class="pin-btn" data-num="8">8</button>
+      <button class="pin-btn" data-num="9">9</button>
+      <button class="pin-btn pin-action" id="pinClear">⌫</button>
+      <button class="pin-btn" data-num="0">0</button>
+      <button class="pin-btn pin-action" id="pinEnter">✓</button>
+    </div>
+    <p class="pin-hint" id="pinHint">Default PIN: 1234</p>
   </div>
-  <div class="toolbar-actions">
-    <button class="btn ghost" id="btnRun" title="Run (Ctrl+Enter)">▶ Run</button>
-    <button class="btn ghost" id="btnPreviewFull" title="Fullscreen">⛶</button>
-    <button class="btn ghost" id="btnNewTab" title="New tab">↗</button>
-    <button class="icon-btn" id="btnTheme" aria-label="Theme">
-      <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-      <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="app" style="display:none">
+  
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="icon-btn" id="btnMenu">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
+    <div class="topbar-title">
+      <h1 id="projectName">My Project</h1>
+      <span class="file-name" id="fileName">index.html</span>
+    </div>
+    <button class="icon-btn" id="btnRun">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+  </header>
+
+  <!-- FILE TABS -->
+  <div class="file-tabs" id="fileTabs">
+    <!-- Dynamic tabs -->
   </div>
-</header>
 
-<!-- WORKSPACE -->
-<div class="workspace">
-  <!-- SIDEBAR -->
-  <aside class="sidebar glass" id="sidebar">
-    <div class="sidebar-tabs">
-      <button class="stab active" data-panel="files">Files</button>
-      <button class="stab" data-panel="projects">Projects</button>
-      <button class="stab" data-panel="tools">Tools</button>
-    </div>
-
-    <div class="panel active" data-panel="files">
-      <div class="panel-toolbar">
-        <button class="mini-btn" id="btnNewFile">+ File</button>
-        <button class="mini-btn" id="btnRenameFile">✎</button>
-        <button class="mini-btn danger" id="btnDeleteFile">🗑</button>
-      </div>
-      <ul class="file-list" id="fileList"></ul>
-    </div>
-
-    <div class="panel" data-panel="projects">
-      <div class="panel-toolbar">
-        <button class="mini-btn" id="btnNewProject">+ New</button>
-        <button class="mini-btn" id="btnDuplicate">⎘</button>
-        <button class="mini-btn danger" id="btnDeleteProject">🗑</button>
-      </div>
-      <ul class="file-list" id="projectList"></ul>
-      <div class="panel-toolbar">
-        <button class="mini-btn" id="btnExportZip">⬇ ZIP</button>
-        <button class="mini-btn" id="btnImportZip">⬆ ZIP</button>
-        <input type="file" id="zipInput" accept=".zip" hidden />
-      </div>
-      <div class="panel-toolbar">
-        <button class="mini-btn" id="btnDownloadHtml">⬇ HTML</button>
-        <button class="mini-btn" id="btnShare">🔗 Share</button>
+  <!-- EDITOR VIEW -->
+  <div class="view active" id="editorView">
+    <div class="editor-container">
+      <div class="line-numbers" id="lineNumbers"></div>
+      <div class="editor-wrap">
+        <pre class="highlight" id="highlight"></pre>
+        <textarea class="editor" id="editor" spellcheck="false" autocomplete="off"></textarea>
+        <div class="error-marker" id="errorMarker"></div>
       </div>
     </div>
-
-    <div class="panel" data-panel="tools">
-      <ul class="tool-list" id="toolList">
-        <li data-tool="json">📋 JSON Formatter</li>
-        <li data-tool="base64">🔐 Base64</li>
-        <li data-tool="url">🔗 URL Encode</li>
-        <li data-tool="htmlent">🏷 HTML Entities</li>
-        <li data-tool="password">🔑 Password</li>
-        <li data-tool="uuid">🆔 UUID</li>
-        <li data-tool="timestamp">🕒 Timestamp</li>
-        <li data-tool="counter">🔢 Word Counter</li>
-        <li data-tool="color">🎨 Color Picker</li>
-        <li data-tool="gradient">🌈 Gradient</li>
-        <li data-tool="lorem">📝 Lorem Ipsum</li>
-        <li data-tool="qr">📱 QR Code</li>
-        <li data-tool="case">🔤 Text Case</li>
-        <li data-tool="escape">🛡 Escape Text</li>
-      </ul>
+    
+    <!-- ERROR BAR -->
+    <div class="error-bar" id="errorBar" style="display:none">
+      <span class="error-icon">⚠</span>
+      <span class="error-text" id="errorText">Error on line 1</span>
+      <button class="error-close" id="errorClose">✕</button>
     </div>
+  </div>
 
-    <div class="sidebar-footer">
-      <button class="mini-btn" id="btnSettings">⚙ Settings</button>
-      <small>v1.1 · 100% Offline</small>
+  <!-- PREVIEW VIEW -->
+  <div class="view" id="previewView">
+    <iframe class="preview-frame" id="previewFrame" sandbox="allow-scripts allow-forms"></iframe>
+  </div>
+
+  <!-- FILES VIEW -->
+  <div class="view" id="filesView">
+    <div class="files-header">
+      <h2>Files</h2>
+      <button class="btn-primary" id="btnNewFile">+ New</button>
     </div>
-  </aside>
+    <ul class="files-list" id="filesList"></ul>
+  </div>
 
-  <!-- EDITOR AREA -->
-  <section class="editor-area">
-    <div class="tabs-bar" id="tabsBar"></div>
+  <!-- PROJECTS VIEW -->
+  <div class="view" id="projectsView">
+    <div class="files-header">
+      <h2>Projects</h2>
+      <button class="btn-primary" id="btnNewProject">+ New</button>
+    </div>
+    <ul class="files-list" id="projectsList"></ul>
+    <div class="project-actions">
+      <button class="btn-secondary" id="btnExport">⬇ Export ZIP</button>
+      <button class="btn-secondary" id="btnImport">⬆ Import ZIP</button>
+      <input type="file" id="zipInput" accept=".zip" hidden />
+    </div>
+  </div>
 
-    <div class="split" id="split">
-      <div class="editor-pane" id="editorPane">
-        <div class="editor-container">
-          <div class="gutter" id="gutter"></div>
-          <div class="editor-wrap">
-            <pre class="highlight" id="highlight" aria-hidden="true"></pre>
-            <textarea class="editor" id="editor" spellcheck="false"></textarea>
-            <div class="error-line" id="errorLine"></div>
-          </div>
-        </div>
-        <div class="findbar glass" id="findbar" style="display:none">
-          <input type="text" id="findInput" placeholder="Find" />
-          <input type="text" id="replaceInput" placeholder="Replace" />
-          <button class="mini-btn" id="btnFindNext">Next</button>
-          <button class="mini-btn" id="btnReplace">Replace</button>
-          <button class="mini-btn" id="btnReplaceAll">All</button>
-          <button class="mini-btn" id="btnCloseFind">✕</button>
-          <span class="find-status" id="findStatus"></span>
-        </div>
+  <!-- SETTINGS VIEW -->
+  <div class="view" id="settingsView">
+    <h2>Settings</h2>
+    <div class="settings-list">
+      <div class="setting-item">
+        <label>Theme</label>
+        <select id="settingTheme">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
       </div>
-
-      <div class="split-handle" id="splitHandle"></div>
-
-      <div class="preview-pane" id="previewPane">
-        <div class="preview-toolbar">
-          <span class="preview-title">Preview</span>
-          <button class="mini-btn" id="btnRefresh">↻</button>
-        </div>
-        <iframe class="preview" id="preview" sandbox="allow-scripts allow-modals allow-forms allow-same-origin"></iframe>
+      <div class="setting-item">
+        <label>Font Size</label>
+        <input type="range" id="settingFontSize" min="12" max="20" value="14" />
+      </div>
+      <div class="setting-item">
+        <label>Auto Save</label>
+        <input type="checkbox" id="settingAutoSave" checked />
+      </div>
+      <div class="setting-item">
+        <label>Auto Lock (minutes)</label>
+        <input type="number" id="settingAutoLock" min="1" max="60" value="5" />
+      </div>
+      <div class="setting-item">
+        <label>Change PIN</label>
+        <button class="btn-secondary" id="btnChangePin">Change</button>
+      </div>
+      <div class="setting-item">
+        <label>Lock Now</label>
+        <button class="btn-danger" id="btnLockNow">🔒 Lock</button>
       </div>
     </div>
-  </section>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-view="editorView">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Editor</span>
+    </button>
+    <button class="nav-btn" data-view="previewView">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span>Preview</span>
+    </button>
+    <button class="nav-btn" data-view="filesView">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      <span>Files</span>
+    </button>
+    <button class="nav-btn" data-view="projectsView">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      <span>Projects</span>
+    </button>
+    <button class="nav-btn" data-view="settingsView">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
+    </button>
+  </nav>
+
 </div>
 
-<!-- STATUS BAR -->
-<footer class="statusbar glass">
-  <div class="status-left">
-    <span class="status-item" id="statusErrors">✓ No errors</span>
-    <span class="status-item" id="statusFile">index.html</span>
+<!-- SIDE MENU -->
+<div class="side-menu" id="sideMenu">
+  <div class="side-menu-header">
+    <h3>Menu</h3>
+    <button class="icon-btn" id="btnCloseMenu">✕</button>
   </div>
-  <div class="status-right">
-    <span class="status-item" id="statusCursor">Ln 1, Col 1</span>
-    <span class="status-item" id="statusSize">0 B</span>
-    <span class="status-item" id="statusSave">Saved</span>
-  </div>
-</footer>
-
-<!-- ERROR PANEL -->
-<div class="error-panel glass" id="errorPanel" style="display:none">
-  <div class="error-panel-header">
-    <strong>Errors</strong>
-    <button class="mini-btn" id="btnCloseErrors">✕</button>
-  </div>
-  <ul class="error-list" id="errorList"></ul>
+  <ul class="side-menu-list">
+    <li id="menuNewFile">📄 New File</li>
+    <li id="menuRename">✏️ Rename File</li>
+    <li id="menuDelete">🗑️ Delete File</li>
+    <li id="menuDownload">⬇️ Download HTML</li>
+    <li id="menuShare">🔗 Share Project</li>
+  </ul>
 </div>
+<div class="overlay" id="overlay"></div>
 
 <!-- MODAL -->
-<div class="modal-backdrop" id="modalBackdrop">
-  <div class="modal glass" id="modal">
-    <div class="modal-header">
-      <h3 id="modalTitle">Dialog</h3>
-      <button class="icon-btn" id="modalClose">✕</button>
-    </div>
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3 id="modalTitle">Title</h3>
     <div class="modal-body" id="modalBody"></div>
-    <div class="modal-footer" id="modalFooter"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="modalCancel">Cancel</button>
+      <button class="btn-primary" id="modalOk">OK</button>
+    </div>
   </div>
-</div>
-
-<!-- TOOL DRAWER -->
-<div class="tool-drawer glass" id="toolDrawer">
-  <div class="tool-drawer-header">
-    <h3 id="toolTitle">Tool</h3>
-    <button class="icon-btn" id="toolClose">✕</button>
-  </div>
-  <div class="tool-drawer-body" id="toolBody"></div>
 </div>
 
 <!-- TOAST -->
