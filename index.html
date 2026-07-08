@@ -1,111 +1,373 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Developer Toolkit</title>
-
-<link rel="stylesheet" href="style.css">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Modern offline Developer Toolkit - JSON, Base64, QR, Passwords and more." />
+<title>DevKit — Developer Toolkit</title>
+<link rel="stylesheet" href="style.css" />
+<!-- QR Code library (loaded once, works offline afterwards) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 </head>
-
 <body>
 
-<header>
-
-<h1>Developer Toolkit</h1>
-
-<button id="themeBtn">🌙</button>
-
+<!-- ============== HEADER ============== -->
+<header class="app-header glass">
+  <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Toggle menu">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <div class="brand">
+    <div class="logo">⚡</div>
+    <div>
+      <h1>DevKit</h1>
+      <p class="tagline">Developer Toolkit</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <input type="search" id="toolSearch" class="search glass" placeholder="Search tools…" />
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+      <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </div>
 </header>
 
-<div class="container">
+<!-- ============== SIDEBAR ============== -->
+<aside class="sidebar glass" id="sidebar">
+  <nav class="tool-list" id="toolList">
+    <!-- Populated by JS -->
+  </nav>
+  <div class="sidebar-footer">
+    <small>v1.0 · 100% Offline</small>
+  </div>
+</aside>
+<div class="overlay" id="overlay"></div>
 
-<div class="card">
+<!-- ============== MAIN ============== -->
+<main class="main" id="main">
 
-<h2>JSON Formatter</h2>
+  <!-- JSON Formatter -->
+  <section class="tool" data-tool="json">
+    <div class="tool-header">
+      <h2>JSON Formatter & Validator</h2>
+      <p>Paste JSON, format it and validate its structure.</p>
+    </div>
+    <div class="tool-body">
+      <textarea id="jsonInput" class="code-area" placeholder='{"hello":"world"}'></textarea>
+      <div class="btn-row">
+        <button class="btn primary" data-action="json-format">Format</button>
+        <button class="btn" data-action="json-minify">Minify</button>
+        <button class="btn" data-action="json-validate">Validate</button>
+        <button class="btn ghost" data-copy="jsonInput">Copy</button>
+      </div>
+      <div class="status" id="jsonStatus"></div>
+    </div>
+  </section>
 
-<textarea id="jsonInput" placeholder="Paste JSON"></textarea>
+  <!-- Base64 -->
+  <section class="tool" data-tool="base64">
+    <div class="tool-header">
+      <h2>Base64 Encode / Decode</h2>
+      <p>Convert text to Base64 and back.</p>
+    </div>
+    <div class="tool-body">
+      <textarea id="b64Input" class="code-area" placeholder="Enter text…"></textarea>
+      <div class="btn-row">
+        <button class="btn primary" data-action="b64-encode">Encode</button>
+        <button class="btn primary" data-action="b64-decode">Decode</button>
+        <button class="btn ghost" data-copy="b64Input">Copy</button>
+      </div>
+    </div>
+  </section>
 
-<div class="buttons">
+  <!-- URL Encode -->
+  <section class="tool" data-tool="url">
+    <div class="tool-header">
+      <h2>URL Encode / Decode</h2>
+      <p>Encode or decode URL components.</p>
+    </div>
+    <div class="tool-body">
+      <textarea id="urlInput" class="code-area" placeholder="https://example.com/?q=hello world"></textarea>
+      <div class="btn-row">
+        <button class="btn primary" data-action="url-encode">Encode</button>
+        <button class="btn primary" data-action="url-decode">Decode</button>
+        <button class="btn ghost" data-copy="urlInput">Copy</button>
+      </div>
+    </div>
+  </section>
 
-<button onclick="formatJSON()">Format</button>
+  <!-- HTML Entities -->
+  <section class="tool" data-tool="html">
+    <div class="tool-header">
+      <h2>HTML Entity Encode / Decode</h2>
+      <p>Convert characters to HTML entities and back.</p>
+    </div>
+    <div class="tool-body">
+      <textarea id="htmlInput" class="code-area" placeholder="<div>Hello & welcome</div>"></textarea>
+      <div class="btn-row">
+        <button class="btn primary" data-action="html-encode">Encode</button>
+        <button class="btn primary" data-action="html-decode">Decode</button>
+        <button class="btn ghost" data-copy="htmlInput">Copy</button>
+      </div>
+    </div>
+  </section>
 
-<button onclick="copyJSON()">Copy</button>
+  <!-- Color Picker -->
+  <section class="tool" data-tool="color">
+    <div class="tool-header">
+      <h2>Color Picker & Converter</h2>
+      <p>Pick a color and convert between HEX, RGB and HSL.</p>
+    </div>
+    <div class="tool-body">
+      <div class="color-grid">
+        <input type="color" id="colorPicker" value="#6366f1" />
+        <div class="color-preview" id="colorPreview" style="background:#6366f1"></div>
+      </div>
+      <div class="field"><label>HEX</label><input type="text" id="colorHex" value="#6366f1" /><button class="btn ghost small" data-copy="colorHex">Copy</button></div>
+      <div class="field"><label>RGB</label><input type="text" id="colorRgb" readonly /><button class="btn ghost small" data-copy="colorRgb">Copy</button></div>
+      <div class="field"><label>HSL</label><input type="text" id="colorHsl" readonly /><button class="btn ghost small" data-copy="colorHsl">Copy</button></div>
+    </div>
+  </section>
 
-</div>
+  <!-- UUID -->
+  <section class="tool" data-tool="uuid">
+    <div class="tool-header">
+      <h2>UUID Generator</h2>
+      <p>Generate random UUID v4 identifiers.</p>
+    </div>
+    <div class="tool-body">
+      <div class="field"><label>Quantity</label><input type="number" id="uuidCount" value="5" min="1" max="100" /></div>
+      <textarea id="uuidOutput" class="code-area" readonly></textarea>
+      <div class="btn-row">
+        <button class="btn primary" data-action="uuid-gen">Generate</button>
+        <button class="btn ghost" data-copy="uuidOutput">Copy</button>
+      </div>
+    </div>
+  </section>
 
-</div>
+  <!-- Password -->
+  <section class="tool" data-tool="password">
+    <div class="tool-header">
+      <h2>Password Generator</h2>
+      <p>Create strong, random passwords.</p>
+    </div>
+    <div class="tool-body">
+      <div class="field"><label>Length: <span id="pwdLenVal">16</span></label>
+        <input type="range" id="pwdLen" min="4" max="64" value="16" />
+      </div>
+      <div class="checkbox-grid">
+        <label><input type="checkbox" id="pwdUpper" checked /> Uppercase</label>
+        <label><input type="checkbox" id="pwdLower" checked /> Lowercase</label>
+        <label><input type="checkbox" id="pwdNum" checked /> Numbers</label>
+        <label><input type="checkbox" id="pwdSym" checked /> Symbols</label>
+      </div>
+      <input type="text" id="pwdOutput" class="code-input" readonly />
+      <div class="btn-row">
+        <button class="btn primary" data-action="pwd-gen">Generate</button>
+        <button class="btn ghost" data-copy="pwdOutput">Copy</button>
+      </div>
+    </div>
+  </section>
 
-<div class="card">
+  <!-- Timestamp -->
+  <section class="tool" data-tool="timestamp">
+    <div class="tool-header">
+      <h2>Timestamp Converter</h2>
+      <p>Convert between Unix timestamps and human-readable dates.</p>
+    </div>
+    <div class="tool-body">
+      <div class="field"><label>Unix Timestamp (seconds)</label>
+        <input type="number" id="tsUnix" />
+        <button class="btn ghost small" data-copy="tsUnix">Copy</button>
+      </div>
+      <div class="field"><label>ISO Date</label>
+        <input type="text" id="tsIso" />
+        <button class="btn ghost small" data-copy="tsIso">Copy</button>
+      </div>
+      <div class="field"><label>Local</label>
+        <input type="text" id="tsLocal" readonly />
+      </div>
+      <div class="btn-row">
+        <button class="btn" data-action="ts-now">Use Now</button>
+      </div>
+    </div>
+  </section>
 
-<h2>Password Generator</h2>
+  <!-- QR Code -->
+  <section class="tool" data-tool="qr">
+    <div class="tool-header">
+      <h2>QR Code Generator</h2>
+      <p>Generate QR codes for any text or URL.</p>
+    </div>
+    <div class="tool-body">
+      <textarea id="qrInput" class="code-area" placeholder="https://example.com"></textarea>
+      <div class="btn-row">
+        <button class="btn primary" data-action="qr-gen">Generate</button>
+      </div>
+      <div class="qr-wrap" id="qrWrap"></div>
+    </div>
+  </section>
 
-<input type="number" id="length" value="16">
+  <!-- Lorem Ipsum -->
+  <section class="tool" data-tool="lorem">
+    <div class="tool-header">
+      <h2>Lorem Ipsum Generator</h2>
+      <p>Generate placeholder text.</p>
+    </div>
+    <div class="tool-body">
+      <div class="field"><label>Paragraphs</label>
+        <input type="number" id="loremCount" value="3" min="1" max="50" />
+      </div>
+      <textarea id="loremOutput" class="code-area" readonly></textarea>
+      <div class="btn-row">
+        <button class="btn primary" data-action="lorem-gen">Generate</button>
+        <button class="btn ghost" data-copy="loremOutput">Copy</button>
+      </div>
+    </div>
+  </section>
 
-<div class="buttons">
+  <!-- Text Case -->
+  <section class="tool" data-tool="case">
+    <div class="tool-header">
+      <h2>Text Case Converter</h2>
+      <p>Convert text between different cases.</p>
+    </div>
+    <div class="tool-body">
+      <textarea id="caseInput" class="code-area" placeholder="Type some text…"></textarea>
+      <div class="btn-row wrap">
+        <button class="btn" data-action="case-upper">UPPER</button>
+        <button class="btn" data-action="case-lower">lower</button>
+        <button class="btn" data-action="case-title">Title Case</button>
+        <button class="btn" data-action="case-sentence">Sentence case</button>
+        <button class="btn" data-action="case-camel">camelCase</button>
+        <button class="btn" data-action="case-snake">snake_case</button>
+        <button class="btn" data-action="case-kebab">kebab-case</button>
+        <button class="btn ghost" data-copy="caseInput">Copy</button>
+      </div>
+    </div>
+  </section>
 
-<button onclick="generatePassword()">Generate</button>
+  <!-- Word Counter -->
+  <section class="tool" data-tool="counter">
+    <div class="tool-header">
+      <h2>Word & Character Counter</h2>
+      <p>Analyze text for words, characters and reading time.</p>
+    </div>
+    <div class="tool-body">
+      <textarea id="counterInput" class="code-area" placeholder="Start typing…"></textarea>
+      <div class="stats-grid" id="counterStats">
+        <div class="stat"><span class="stat-value" id="statChars">0</span><span class="stat-label">Characters</span></div>
+        <div class="stat"><span class="stat-value" id="statNoSpace">0</span><span class="stat-label">No spaces</span></div>
+        <div class="stat"><span class="stat-value" id="statWords">0</span><span class="stat-label">Words</span></div>
+        <div class="stat"><span class="stat-value" id="statLines">0</span><span class="stat-label">Lines</span></div>
+        <div class="stat"><span class="stat-value" id="statRead">0s</span><span class="stat-label">Read time</span></div>
+      </div>
+    </div>
+  </section>
 
-<button onclick="copyPassword()">Copy</button>
+  <!-- Minify -->
+  <section class="tool" data-tool="minify">
+    <div class="tool-header">
+      <h2>Minify HTML / CSS / JS</h2>
+      <p>Remove whitespace and comments to shrink code size.</p>
+    </div>
+    <div class="tool-body">
+      <div class="field"><label>Type</label>
+        <select id="minifyType">
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="js">JavaScript</option>
+        </select>
+      </div>
+      <textarea id="minifyInput" class="code-area" placeholder="Paste code…"></textarea>
+      <div class="btn-row">
+        <button class="btn primary" data-action="minify-run">Minify</button>
+        <button class="btn ghost" data-copy="minifyInput">Copy</button>
+      </div>
+      <div class="status" id="minifyStatus"></div>
+    </div>
+  </section>
 
-</div>
+  <!-- Beautify -->
+  <section class="tool" data-tool="beautify">
+    <div class="tool-header">
+      <h2>Beautify HTML / CSS / JS</h2>
+      <p>Format and indent code for readability.</p>
+    </div>
+    <div class="tool-body">
+      <div class="field"><label>Type</label>
+        <select id="beautifyType">
+          <option value="html">HTML</option>
+          <option value="css">CSS</option>
+          <option value="js">JavaScript</option>
+        </select>
+      </div>
+      <textarea id="beautifyInput" class="code-area" placeholder="Paste code…"></textarea>
+      <div class="btn-row">
+        <button class="btn primary" data-action="beautify-run">Beautify</button>
+        <button class="btn ghost" data-copy="beautifyInput">Copy</button>
+      </div>
+    </div>
+  </section>
 
-<input id="passwordResult" readonly>
+  <!-- Escape -->
+  <section class="tool" data-tool="escape">
+    <div class="tool-header">
+      <h2>Escape / Unescape Text</h2>
+      <p>Escape special characters for strings and regex.</p>
+    </div>
+    <div class="tool-body">
+      <textarea id="escapeInput" class="code-area" placeholder='He said "hello" & left...'></textarea>
+      <div class="btn-row wrap">
+        <button class="btn" data-action="escape-js">Escape JS</button>
+        <button class="btn" data-action="unescape-js">Unescape JS</button>
+        <button class="btn" data-action="escape-regex">Escape Regex</button>
+        <button class="btn ghost" data-copy="escapeInput">Copy</button>
+      </div>
+    </div>
+  </section>
 
-</div>
+  <!-- Random Number -->
+  <section class="tool" data-tool="random">
+    <div class="tool-header">
+      <h2>Random Number Generator</h2>
+      <p>Generate random integers within a range.</p>
+    </div>
+    <div class="tool-body">
+      <div class="field-row">
+        <div class="field"><label>Min</label><input type="number" id="randMin" value="1" /></div>
+        <div class="field"><label>Max</label><input type="number" id="randMax" value="100" /></div>
+        <div class="field"><label>Count</label><input type="number" id="randCount" value="1" min="1" max="1000" /></div>
+      </div>
+      <textarea id="randOutput" class="code-area" readonly></textarea>
+      <div class="btn-row">
+        <button class="btn primary" data-action="rand-gen">Generate</button>
+        <button class="btn ghost" data-copy="randOutput">Copy</button>
+      </div>
+    </div>
+  </section>
 
-<div class="card">
+  <!-- Notes -->
+  <section class="tool" data-tool="notes">
+    <div class="tool-header">
+      <h2>Developer Notes</h2>
+      <p>Private notes saved locally in your browser.</p>
+    </div>
+    <div class="tool-body">
+      <textarea id="notesInput" class="code-area tall" placeholder="Write your notes…"></textarea>
+      <div class="btn-row">
+        <span class="status" id="notesStatus">Auto-saved ✓</span>
+        <button class="btn ghost" data-copy="notesInput">Copy</button>
+        <button class="btn danger" data-action="notes-clear">Clear</button>
+      </div>
+    </div>
+  </section>
 
-<h2>UUID Generator</h2>
+</main>
 
-<input id="uuidResult" readonly>
-
-<div class="buttons">
-
-<button onclick="generateUUID()">Generate</button>
-
-<button onclick="copyUUID()">Copy</button>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<h2>Base64 Encoder</h2>
-
-<textarea id="baseInput"></textarea>
-
-<div class="buttons">
-
-<button onclick="encodeBase64()">Encode</button>
-
-<button onclick="decodeBase64()">Decode</button>
-
-</div>
-
-<textarea id="baseOutput" readonly></textarea>
-
-</div>
-
-<div class="card">
-
-<h2>Word Counter</h2>
-
-<textarea id="wordInput"></textarea>
-
-<p id="wordCount">Words : 0</p>
-
-</div>
-
-</div>
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
