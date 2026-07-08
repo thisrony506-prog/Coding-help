@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer Toolkit</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<header>
+
+<h1>Developer Toolkit</h1>
+
+<button id="themeBtn">🌙</button>
+
+</header>
+
+<div class="container">
+
+<div class="card">
+
+<h2>JSON Formatter</h2>
+
+<textarea id="jsonInput" placeholder="Paste JSON"></textarea>
+
+<div class="buttons">
+
+<button onclick="formatJSON()">Format</button>
+
+<button onclick="copyJSON()">Copy</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Password Generator</h2>
+
+<input type="number" id="length" value="16">
+
+<div class="buttons">
+
+<button onclick="generatePassword()">Generate</button>
+
+<button onclick="copyPassword()">Copy</button>
+
+</div>
+
+<input id="passwordResult" readonly>
+
+</div>
+
+<div class="card">
+
+<h2>UUID Generator</h2>
+
+<input id="uuidResult" readonly>
+
+<div class="buttons">
+
+<button onclick="generateUUID()">Generate</button>
+
+<button onclick="copyUUID()">Copy</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>Base64 Encoder</h2>
+
+<textarea id="baseInput"></textarea>
+
+<div class="buttons">
+
+<button onclick="encodeBase64()">Encode</button>
+
+<button onclick="decodeBase64()">Decode</button>
+
+</div>
+
+<textarea id="baseOutput" readonly></textarea>
+
+</div>
+
+<div class="card">
+
+<h2>Word Counter</h2>
+
+<textarea id="wordInput"></textarea>
+
+<p id="wordCount">Words : 0</p>
+
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
